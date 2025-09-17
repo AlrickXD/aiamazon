@@ -1,6 +1,14 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
+import type { PieLabelRenderProps } from "recharts"; // 👈 important
 
 interface CategoryChartProps {
   data: Array<{
@@ -12,12 +20,6 @@ interface CategoryChartProps {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
-// Typage du renderer de label (percent est optionnel côté Recharts)
-type PieLabelProps = {
-  name: string;
-  percent?: number;
-};
-
 export function CategoryChart({ data }: CategoryChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -27,9 +29,11 @@ export function CategoryChart({ data }: CategoryChartProps) {
           cx="50%"
           cy="50%"
           labelLine={false}
-          label={({ name, percent }: PieLabelProps) =>
-            `${name} ${(((percent ?? 0) * 100)).toFixed(0)}%`
-          }
+          label={(props: PieLabelRenderProps) => {
+            const { name, percent } = props;
+            const pct = ((percent ?? 0) * 100).toFixed(0);
+            return `${name ?? ""} ${pct}%`;
+          }}
           outerRadius={80}
           fill="#8884d8"
           dataKey="value"
